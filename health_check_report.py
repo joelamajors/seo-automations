@@ -1,8 +1,7 @@
-"""A simple example of how to access the Google Analytics API."""
-
 from googleapiclient.discovery import build
 from oauth2client.service_account import ServiceAccountCredentials
 import json
+
 
 def get_service(api_name, api_version, scopes, key_file_location):
     credentials = ServiceAccountCredentials.from_json_keyfile_name(
