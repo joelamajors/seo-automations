@@ -21,10 +21,10 @@ def get_profile_ids(service):
         accounts_items = accounts.get('items')
 
         for account_item in accounts_items:
-            ga_id = account_item.get('id')
+            account_id = account_item.get('id')
 
             properties = service.management().webproperties().list(
-                    accountId=ga_id).execute()
+                    accountId=account_id).execute()
 
             if properties.get('items'):
                 property_items = properties.get('items')
@@ -33,7 +33,7 @@ def get_profile_ids(service):
                     prop_id = prop_item.get('id')
 
                     profiles = service.management().profiles().list(
-                            accountId=ga_id,
+                            accountId=account_id,
                             webPropertyId=prop_id).execute()
 
                     if profiles.get('items'):
