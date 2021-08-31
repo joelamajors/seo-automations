@@ -1,6 +1,51 @@
 from googleapiclient.discovery import build
 from oauth2client.service_account import ServiceAccountCredentials
 import json
+import boto3
+from botocore.exceptions import ClientError
+from datetime import datetime
+# import concurrent
+
+now = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+
+def get_secret():
+    secret_name = "GoogleAnalyticsAPI"
+    region_name = "us-east-1"
+
+    # Create a Secrets Manager client
+    session = boto3.session.Session()
+    client = session.client(
+        service_name='secretsmanager',
+        region_name=region_name)
+
+    try:
+        get_secret_value_response = client.get_secret_value(
+            SecretId=secret_name)
+    except ClientError as e:
+        if e.response['Error']['Code'] == 'DecryptionFailureException':
+            raise e
+        elif e.response['Error']['Code'] == 'InternalServiceErrorException':
+            raise e
+        elif e.response['Error']['Code'] == 'InvalidParameterException':
+            raise e
+        elif e.response['Error']['Code'] == 'InvalidRequestException':
+            raise e
+        elif e.response['Error']['Code'] == 'ResourceNotFoundException':
+            raise e
+    else:
+        if 'SecretString' in get_secret_value_response:
+            secret = get_secret_value_response['SecretString']
+        else:
+            secret = base64.b64decode(get_secret_value_response['SecretBinary'])
+
+    secret_json = json.loads(secret)
+
+    with open('client_secret.json', 'w') as client_secret:
+        client_secret.write(json.dumps(secret_json))
+
+get_secret()
+scope = 'https://www.googleapis.com/auth/analytics.readonly'
+key_file_location = './client_secret.json'
 
 
 def get_service(api_name, api_version, scopes, key_file_location):
@@ -55,10 +100,6 @@ def get_results(service, profile_id):
 
 
 def main():
-    # Define the auth scopes to request.
-    scope = 'https://www.googleapis.com/auth/analytics.readonly'
-    key_file_location = './client_secrets.json'
-
     # Authenticate and construct service.
     service = get_service(
             api_name='analytics',
