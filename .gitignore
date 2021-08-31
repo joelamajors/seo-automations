@@ -1,5 +1,5 @@
 analytics-quickstart
 results
 source
-client_secrets.json
+*.json
 .DS_Store
