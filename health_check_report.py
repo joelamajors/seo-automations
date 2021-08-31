@@ -107,15 +107,13 @@ def get_profile_ids(service):
     return view_ids
 
 
-def list_profile_sessions(request_id, response, exception):
-    if exception is not None:
-        print("profile session borked")
-        print(exception)
-        pass
-    else:
-        profile_sessions.append(response)
-        pass
-
+def get_results(service, profile_id):
+    # Calls Anayltics Reports API for session data
+    return service.data().ga().get(
+            ids='ga:' + profile_id,
+            start_date='7daysAgo',
+            end_date='today',
+            metrics='ga:sessions').execute()
 
 def main():
     # Authenticate and construct service.
@@ -125,29 +123,20 @@ def main():
             scopes=[scope],
             key_file_location=key_file_location)
 
-    profile_id_batch = service.new_batch_http_request()
-
+    results_dict = []
     zero_sessions = []
 
     profile_ids = get_profile_ids(service)
 
     for profile_id in profile_ids:
-        profile_id_batch.add(service.data().ga().list(
-            ids='ga:' + profile_id,
-            start_date='yesterday',
-            end_date='today',
-            metrics='ga:sessions'
-            ),
-            callback=list_profile_sessions
-        )
+        result = get_results(service, profile_id)
+        results_dict.append(result)
 
-    profile_id_batch.execute()
+    with open('results_file.json', 'w') as results_file:
+        results_file.write(json.dumps(results_dict))
 
-    with open('profile_sessions_file.json', 'w') as profile_sessions_file:
-        profile_sessions_file.write(json.dumps(profile_sessions))
-
-    # takes zero results
-    for session in profile_sessions:
+    # makes file of zero results
+    for session in results_dict:
         if session.get('totalsForAllResults').get('ga:sessions') == "0":
             zero_sessions.append(session.get('profileInfo'))
 
@@ -157,7 +146,6 @@ def main():
 
 webproperties = []
 profile_list = []
-profile_sessions = []
 get_secret()
 scope = 'https://www.googleapis.com/auth/analytics.readonly'
 key_file_location = './client_secret.json'
