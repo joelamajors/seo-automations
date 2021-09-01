@@ -4,7 +4,7 @@ import json
 import boto3
 from botocore.exceptions import ClientError
 from datetime import datetime
-# import concurrent
+import time
 
 now = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
 
@@ -52,31 +52,10 @@ def get_service(api_name, api_version, scopes, key_file_location):
     return service
 
 
-def list_webproperties(request_id, response, exception):
-    if exception is not None:
-        print("webproperties failed")
-        print(exception)
-        pass
-    else:
-        webproperties.append(response)
-        pass
-
-
-def list_profiles(request_id, response, exception):
-    if exception is not None:
-        print("list profiles failed")
-        print(exception)
-        pass
-    else:
-        profile_list.append(response)
-        pass
-
-
 def get_profile_ids(service):
     # Gets view_ids for individual properties
     accounts = service.management().accounts().list().execute()
-    webproperties_batch = service.new_batch_http_request()
-    profiles_batch = service.new_batch_http_request()
+
     view_ids = []
 
     if accounts.get('items'):
@@ -84,9 +63,13 @@ def get_profile_ids(service):
 
         for account_item in accounts_items:
             account_id = account_item.get('id')
-            webproperties_batch.add(service.management().webproperties().list(accountId=account_id), callback=list_webproperties)
 
-    webproperties_batch.execute()
+            webproperty = service.management().webproperties().list(
+                    accountId=account_id).execute()
+
+            webproperties.append(webproperty)
+
+            time.sleep(.5)
 
     for webproperty in webproperties:
         if webproperty.get('items'):
@@ -96,13 +79,18 @@ def get_profile_ids(service):
                 prop_id = prop_item.get('id')
                 prop_account_id = prop_item.get('accountId')
 
-                profiles_batch.add(service.management().profiles().list(accountId=prop_account_id, webPropertyId=prop_id), callback=list_profiles)
+                get_profile= service.management().profiles().list(
+                        accountId=prop_account_id,
+                        webPropertyId=prop_id).execute()
 
-    profiles_batch.execute()
+                profile_list.append(get_profile)
+
+                time.sleep(.5)
 
     for profile in profile_list:
         if profile.get('items'):
-            view_ids.append(profile.get('id'))
+            for profile_item in profile.get('items'):
+                view_ids.append(profile_item.get('id'))
 
     return view_ids
 
