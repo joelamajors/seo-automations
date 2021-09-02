@@ -95,7 +95,6 @@ def get_profile_ids(service):
     return view_ids
 
 
-# abstract these!
 def get_results(service, profile_id, start, end, metrics):
     # Calls Anayltics Reports API for session data
     return service.data().ga().get(
