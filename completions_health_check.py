@@ -104,33 +104,33 @@ def get_results(service, profile_id, start, end, metrics):
             end_date='today',
             metrics=f'ga:{metrics}').execute()
 
+
 def main():
-    # Authenticate and construct service.
     service = get_service(
             api_name='analytics',
             api_version='v3',
             scopes=[scope],
             key_file_location=key_file_location)
 
-    results_dict = []
-    zero_sessions = []
+    completions_dict = []
+    zero_completions = []
 
     profile_ids = get_profile_ids(service)
 
     for profile_id in profile_ids:
-        result = get_results(service, profile_id, '7daysAgo', 'today', 'sessions')
-        results_dict.append(result)
+        result = get_results(service, profile_id, '30daysAgo', 'yesterday', 'goalCompletionsAll')
+        completions_dict.append(result)
 
-    with open('results_file.json', 'w') as results_file:
-        results_file.write(json.dumps(results_dict))
+    with open('completions_file.json', 'w') as completions_file:
+        completions_file.write(json.dumps(completions_dict))
 
     # makes file of zero results
-    for session in results_dict:
-        if session.get('totalsForAllResults').get('ga:sessions') == "0":
-            zero_sessions.append(session.get('profileInfo'))
+    for comp in completions_dict:
+        if comp.get('totalsForAllResults').get('ga:goalCompletionsAll') == "0":
+            zero_completions.append(comp.get('profileInfo'))
 
-    with open('zero_sessions.json', 'w') as zero_sessions_file:
-        zero_sessions_file.write(json.dumps(zero_sessions))
+    with open('zero_completions.json', 'w') as zero_completions_file:
+        zero_completions_file.write(json.dumps(zero_completions))
 
 
 webproperties = []

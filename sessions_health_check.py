@@ -104,8 +104,7 @@ def get_results(service, profile_id, start, end, metrics):
             end_date='today',
             metrics=f'ga:{metrics}').execute()
 
-def main():
-    # Authenticate and construct service.
+def get_sessions():
     service = get_service(
             api_name='analytics',
             api_version='v3',
