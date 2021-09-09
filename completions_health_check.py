@@ -11,6 +11,7 @@ import time
 def get_secret():
     secret_name = "GoogleAnalyticsAPI"
     region_name = "us-east-1"
+    secret = ''
 
     # Create a Secrets Manager client
     session = boto3.session.Session()
