@@ -1,4 +1,4 @@
-#! /bin/bash/
+#!/bin/bash
 cd /home/ssm-user/scripts/seo-automations
 
 source venv/bin/activate
