@@ -8,6 +8,8 @@ These have been designed to pull down the permissions file needed to read the go
     - run `python --version` or `python3 --version`, which should be ≥`3.9.X`.
         > (For all below commands, use whichever works on your machine: `python` or `python3`)
     - if not installed, then go to the [python download site](https://www.python.org/downloads/) and follow download instructions.
+- Install boto3 outside of the virtual environment
+ - `pip3 install boto3`
 - CD into the repo and create your virtual environment
     - `python3 -m venv venv`
 - Activate your virtual environment
