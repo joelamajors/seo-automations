@@ -3,3 +3,4 @@ results
 source
 *.json
 .DS_Store
+venv
