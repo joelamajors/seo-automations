@@ -3,10 +3,10 @@ from oauth2client.service_account import ServiceAccountCredentials
 import json
 import boto3
 from botocore.exceptions import ClientError
+import base64
 from datetime import datetime
 import time
 
-now = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
 
 def get_secret():
     secret_name = "GoogleAnalyticsAPI"

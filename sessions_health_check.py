@@ -6,7 +6,6 @@ from botocore.exceptions import ClientError
 from datetime import datetime
 import time
 
-now = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
 
 def get_secret():
     secret_name = "GoogleAnalyticsAPI"
@@ -110,20 +109,20 @@ def main():
             scopes=[scope],
             key_file_location=key_file_location)
 
-    results_dict = []
+    sessions_dict = []
     zero_sessions = []
 
     profile_ids = get_profile_ids(service)
 
     for profile_id in profile_ids:
         result = get_results(service, profile_id, '7daysAgo', 'today', 'sessions')
-        results_dict.append(result)
+        sessions_dict.append(result)
 
-    with open('results_file.json', 'w') as results_file:
-        results_file.write(json.dumps(results_dict))
+    with open('sessions_file.json', 'w') as sessions_file:
+        sessions_file.write(json.dumps(sessions_dict))
 
     # makes file of zero results
-    for session in results_dict:
+    for session in sessions_dict:
         if session.get('totalsForAllResults').get('ga:sessions') == "0":
             zero_sessions.append(session.get('profileInfo'))
 
