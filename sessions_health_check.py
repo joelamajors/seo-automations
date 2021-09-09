@@ -34,13 +34,10 @@ def get_secret():
     else:
         if 'SecretString' in get_secret_value_response:
             secret = get_secret_value_response['SecretString']
-        else:
-            secret = base64.b64decode(get_secret_value_response['SecretBinary'])
+            secret_json = json.loads(secret)
+            with open('client_secret.json', 'w') as client_secret:
+                client_secret.write(json.dumps(secret_json))
 
-    secret_json = json.loads(secret)
-
-    with open('client_secret.json', 'w') as client_secret:
-        client_secret.write(json.dumps(secret_json))
 
 
 def get_service(api_name, api_version, scopes, key_file_location):
@@ -128,7 +125,6 @@ def main():
 
     with open('zero_sessions.json', 'w') as zero_sessions_file:
         zero_sessions_file.write(json.dumps(zero_sessions))
-
 
 webproperties = []
 profile_list = []

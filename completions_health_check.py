@@ -11,7 +11,6 @@ import time
 def get_secret():
     secret_name = "GoogleAnalyticsAPI"
     region_name = "us-east-1"
-    secret = ''
 
     # Create a Secrets Manager client
     session = boto3.session.Session()
@@ -36,13 +35,9 @@ def get_secret():
     else:
         if 'SecretString' in get_secret_value_response:
             secret = get_secret_value_response['SecretString']
-        else:
-            secret = base64.b64decode(get_secret_value_response['SecretBinary'])
-
-    secret_json = json.loads(secret)
-
-    with open('client_secret.json', 'w') as client_secret:
-        client_secret.write(json.dumps(secret_json))
+            secret_json = json.loads(secret)
+            with open('client_secret.json', 'w') as client_secret:
+                client_secret.write(json.dumps(secret_json))
 
 
 def get_service(api_name, api_version, scopes, key_file_location):
@@ -131,7 +126,6 @@ def main():
 
     with open('zero_completions.json', 'w') as zero_completions_file:
         zero_completions_file.write(json.dumps(zero_completions))
-
 
 webproperties = []
 profile_list = []
