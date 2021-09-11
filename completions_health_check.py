@@ -65,7 +65,7 @@ def get_profile_ids(service):
 
             webproperties.append(webproperty)
 
-            time.sleep(.5)
+            time.sleep(.1)
 
     for webproperty in webproperties:
         if webproperty.get('items'):
@@ -81,7 +81,7 @@ def get_profile_ids(service):
 
                 profile_list.append(get_profile)
 
-                time.sleep(.5)
+                time.sleep(.1)
 
     for profile in profile_list:
         if profile.get('items'):
